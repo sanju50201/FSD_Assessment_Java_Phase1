@@ -1,28 +1,31 @@
 package com.lockedme;
-
-import java.awt.Menu;
-import java.awt.SystemTray;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Scanner;
 
 public class LockedMe {
+	static String fileName;
 	static final String projectFilesPath = "F:\\LockedMeFiles";
-	static final String errorMessage1 = "Some Error has occured, please check the directory given.";
-	static final String errorMessage2 = "If you face the same error again, Please contact: admin@lockeme.com";
+	static int choice = 0;
+	// Creating a single scanner class to be accessed in all the functions
+	static Scanner readScanner = new Scanner(System.in);
+	static final String errorMessage = "Some error has occured, Please contact: admin@sanjith.com";
+	/**
+	 * This Fucntion displays the Menu
+	 */
 
 	public static void displayMenu() {
 		System.out.println("****************************************");
 		System.out.println("\t\tWelcome to LockedMe.com");
-		System.out.println("\t\tDeveloper Details: Sanjith Kumar V");
 		System.out.println("****************************************");
 		System.out.println("\t\t1. Display all the files");
 		System.out.println("\t\t2. Add a New File");
 		System.out.println("\t\t3. Delete a File");
 		System.out.println("\t\t4. Search a File");
 		System.out.println("\t\t5. Exit");
+		System.out.println("\t\tDeveloper Details: Sanjith Kumar V");
+		System.out.println("*******************************************");
 	}
 
 	/**
@@ -42,32 +45,31 @@ public class LockedMe {
 				}
 			}
 		} catch (Exception ex) {
-			System.out.println(errorMessage1);
-			System.out.println(errorMessage2);
+			System.out.println(errorMessage);
 		}
 
 	}
+	/**
+	 * This method is used to create a new file into the directory
+	 */
 
 	public static void createFiles() {
+		int linesCount = 0;
+		// Using Try-Catch Block
 		try {
-			Scanner reader = new Scanner(System.in);
-			String fileName;
 			System.out.println("Enter File Name: ");
-			fileName = reader.nextLine();
-			int linesCount;
-			System.out.println("Enter how many Lines into the file: ");
-			linesCount = Integer.parseInt(reader.nextLine());
-
+			fileName = readScanner.nextLine();
 			FileWriter myWriter = new FileWriter(projectFilesPath + "//" + fileName);
+			System.out.println("Enter how many Lines into the file: ");
+			linesCount = Integer.parseInt(readScanner.nextLine());
 			for (var i = 0; i <= linesCount; i++) {
-				System.out.println("Enter the file line: ");
-				myWriter.write(reader.nextLine() + "\n");
+				System.out.println("Enter the lines you need to enter to save into the file: ");
+				myWriter.write(readScanner.nextLine() + "\n");
 			}
-			myWriter.close();
-			reader.close();
 			System.out.println("File Successfully Created.");
+			myWriter.close();
 		} catch (Exception Ex) {
-			System.out.println(errorMessage1);
+			System.out.println(errorMessage);
 
 		}
 	}
@@ -76,26 +78,21 @@ public class LockedMe {
 	 * This method will delete the files to be deleted in the directory
 	 */
 	public static void deletefiles() {
-		Scanner objScanner = new Scanner(System.in);
-//		using try-catch block 
+// 			Creating a Try Catch block
 		try {
 			String fileName;
-//		Creating a Scanner Class 
-
 			System.out.println("Enter the file name to be deleted: ");
-			fileName = objScanner.nextLine();
+			fileName = readScanner.nextLine();
 			File file = new File(projectFilesPath + "//" + fileName);
 			if (file.exists()) {
 				file.delete();
 				System.out.println("File deleted successfully: " + fileName);
 			} else {
-				System.out.println("File is not present in the directory");
+				System.out.println("File is not present in the directory, Please create a file in-order to "
+				+"see the changes in the file location");
 			}
 		} catch (Exception Ex) {
-			System.out.println(errorMessage1);
-		} finally {
-//			Closing the Scanner Class
-			objScanner.close();
+			System.out.println(errorMessage);
 		}
 	}
 
@@ -104,14 +101,11 @@ public class LockedMe {
 	 */
 
 	public static void searchFiles() {
-		Scanner objScanner = new Scanner(System.in);
-//		using try-catch block 
+//		Creating a try-catch block 
 		try {
 			String fileName;
-//		Creating a Scanner Class 
-
 			System.out.println("Enter the file name to be searched: ");
-			fileName = objScanner.nextLine();
+			fileName = readScanner.nextLine();
 			File folder = new File(projectFilesPath);
 			File[] listOfFiles = folder.listFiles();
 			LinkedList<String> filenames = new LinkedList<String>();
@@ -121,43 +115,47 @@ public class LockedMe {
 			if (filenames.contains(fileName)) {
 				System.out.println("File is Available");
 			} else {
-				System.out.println("File not available");
+				System.out.println("File not available in the directory you're searching.");
 			}
 
 		} catch (Exception Ex) {
-			System.out.println(errorMessage1);
-		} finally {
-//			Closing the Scanner class
-			objScanner.close();
+			System.out.println(errorMessage);
 		}
-
 	}
-
+/**
+ * Main Method, where all the functions are being called
+ * @param args
+ */
 	public static void main(String[] args) {
-		Scanner readScanner = new Scanner(System.in);
-		int choice;
+		// Using Do-while loop so that this application runs repeatedly
 		do {
 			displayMenu();
 			System.out.println("Enter your choice: ");
 			choice = Integer.parseInt(readScanner.nextLine());
 //			Using Switch Case 
-			switch(choice) {
-				case 1:getAllFiles();
+			switch (choice) {
+			case 1:
+				getAllFiles();
 				break;
-				case 2:createFiles();
+			case 2:
+				createFiles();
 				break;
-				case 3:deletefiles();
+			case 3:
+				deletefiles();
 				break;
-				case 4:searchFiles();
+			case 4:
+				searchFiles();
 				break;
-				case 5:System.exit(0);
+			case 5:
+				System.exit(0);
 				break;
-				default:
+			default:
 				System.out.println("Invalid Option entered");
 				break;
 			}
-			
+
 		} while (choice > 0);
+		// Closing the scanner in order to stop the leak of memory, when input is taken
 		readScanner.close();
 	}
 }
